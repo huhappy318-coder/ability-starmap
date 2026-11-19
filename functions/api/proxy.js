@@ -67,7 +67,7 @@ export async function onRequestPost({ request, env }) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 80_000);
   try {
-    const res = await fetch(url, { method: "POST", ...init, redirect: "error", signal: ctl.signal });
+    const res = await fetch(url, { method: "POST", ...init, redirect: "manual", signal: ctl.signal });
     if (!res.ok) return json({ error: "upstream_error" }, res.status === 401 || res.status === 403 || res.status === 429 ? res.status : 502);
     return json({ text: read(await res.json()) });
   } catch {
