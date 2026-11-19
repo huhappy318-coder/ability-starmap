@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>能力星图</title>
+<meta name="description" content="用 36 颗星盘点自己的能力：信息、技能、精力、财务、职场、创业、关系与保障。数据只保存在你的浏览器里。">
+<meta name="theme-color" content="#070b1a">
+<meta property="og:title" content="能力星图">
+<meta property="og:description" content="用 36 颗星盘点自己的能力，生成你的能力画像。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070b1a'/%3E%3Cpath d='M16 4l2.2 8.8L27 16l-8.8 2.2L16 28l-2.2-9.8L5 16l8.8-3.2z' fill='%23ffd27a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="intro" id="intro" aria-hidden="true">
+  <canvas id="introC"></canvas>
+  <div class="intro-text"><h1>你想要什么样的人生？</h1><p>能力星图 · 36 颗星，看清自己</p><small class="intro-credit">刘橙绿制作</small></div>
+  <button class="intro-skip" id="introSkip" type="button">跳过</button>
+</div>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="app">
+  <div class="bar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l2.6 10.4L29 16l-10.4 2.6L16 30l-2.6-11.4L3 16l10.4-3.6z" fill="#ffd27a"/></svg>
+      <h1>能力星图</h1>
+      <span class="credit">刘橙绿制作</span>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-v="map" aria-selected="true">星图</button>
+      <button role="tab" data-v="panel" aria-selected="false">角色面板</button>
+      <button role="tab" data-v="report" aria-selected="false">画像报告</button>
+    </div>
+    <div class="count"><span>已点亮</span><b id="litN">0</b><span>/ 36</span></div>
+    <div class="menu-wrap">
+      <button class="ibtn" id="menuBtn" aria-label="更多" aria-haspopup="true" aria-expanded="false">⋯</button>
+      <div class="menu" id="menu" role="menu" hidden>
+        <button role="menuitem" id="mExport">导出备份</button>
+        <button role="menuitem" id="mImport">导入备份</button>
+        <button role="menuitem" id="mAI">AI 设置</button>
+        <button role="menuitem" id="mAbout">关于能力星图</button>
+        <button role="menuitem" id="mReset" class="danger">清空重来</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </div>
+  <div class="prog"><i id="progBar"></i></div>
+
+  <section class="view on" id="v-map">
+    <div class="map-tools">
+      <div class="crumb" id="crumb"><b>全部星座</b></div>
+      <span class="sp"></span>
+      <button class="btn net" id="netBtn" aria-pressed="false" title="显示所有星之间的关联">⟡ 关系网</button>
+      <button class="ibtn" id="zPrev" aria-label="上一个星座" hidden>‹</button>
+      <button class="ibtn" id="zNext" aria-label="下一个星座" hidden>›</button>
+      <button class="cta" id="quickBtn">⚡ 快速点亮</button>
+      <button class="btn" id="nextStar">✦ 下一颗</button>
+    </div>
+    <div class="map-wrap" id="mapWrap"><svg id="map" role="group" aria-label="能力星图"></svg><div class="tip" id="tip"></div>
+      <div class="welcome" id="welcome" hidden><div class="card"><h2>36 颗星，先快速过一遍</h2><p>每颗星只问一句：这一项你现在了解多少。三分钟左右就能点亮整片星空，之后再挑感兴趣的慢慢写。</p><button class="btn primary" id="welcomeGo">⚡ 开始快速点亮</button><button class="btn" id="welcomeSkip">我自己逛逛</button></div></div></div>
+    <div class="cons-list" id="consList"></div>
+    <p class="hint" id="mapHint">点一颗星，写下你对这一项的了解。</p>
+    <div class="legend">
+      <span><i style="background:#4a5578"></i>还没想过</span>
+      <span><i style="background:#c9d2f5;box-shadow:0 0 6px #c9d2f5"></i>有点模糊</span>
+      <span><i style="background:#fff;box-shadow:0 0 10px #fff"></i>心里有数</span>
+      <span><i style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></i>长处</span>
+      <span><i style="background:var(--cyan);box-shadow:0 0 8px var(--cyan)"></i>想补</span>
+    </div>
+  </section>
+
+  <section class="view" id="v-panel">
+    <div class="panel-grid">
+      <div class="card hero">
+        <div class="emblem-wrap">
+          <svg class="orb" viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="72" fill="none" stroke="rgba(255,210,122,.25)" stroke-dasharray="2 6"/><circle cx="75" cy="3" r="3" fill="#ffd27a"/><circle cx="3" cy="75" r="2" fill="#7fd8ff"/></svg>
+          <div class="emblem" id="emblem">我</div>
+        </div>
+        <div class="rank">
+          <span class="nm" id="rankName">初见星空</span>
+          <div class="xp"><i id="xpBar"></i></div>
+          <small id="rankNext"></small>
+          <div class="rank-path" id="rankPath"></div>
+        </div>
+        <label for="pName" style="position:absolute;left:-9999px">名字</label>
+        <input class="txt" id="pName" maxlength="16" placeholder="你的名字">
+        <label for="pMotto" style="position:absolute;left:-9999px">一句话</label>
+        <input class="txt" id="pMotto" maxlength="40" placeholder="一句话描述现在的自己">
+        <div class="stats">
+          <div class="stat"><b id="sLit">0</b><span>点亮的星</span></div>
+          <div class="stat"><b id="sClear">0</b><span>心里有数</span></div>
+          <div class="stat"><b id="sCons">0</b><span>连成的星座</span></div>
+          <div class="stat"><b id="sWords">0</b><span>写下的字</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>八维清晰度</h3>
+        <svg id="radar" viewBox="0 0 440 400" role="img" aria-label="八个领域的清晰度雷达图"></svg>
+        <div class="attr" id="attr"></div>
+      </div>
+      <div class="card" style="display:grid;gap:18px;align-content:start">
+        <div><h3>长处</h3><div class="list s" id="listS"></div></div>
+        <div><h3>想补</h3><div class="list g" id="listG"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-report">
+    <div class="report" id="report"></div>
+  </section>
+
+  <footer class="foot">
+    <div class="save-state" id="saveState">数据只保存在这台设备的浏览器里。换设备或清理浏览器前，记得在右上角「⋯」里导出备份。</div>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside id="drawer" aria-hidden="true" aria-labelledby="drTitle">
+  <button class="dr-x" id="drX" aria-label="关闭">✕</button>
+  <div class="dr-head">
+    <span class="dom" id="drDom"></span>
+    <h2 id="drTitle"></h2>
+    <p id="drGoal"></p>
+    <div class="dots" id="drDots" aria-label="同一星座的其他项"></div>
+  </div>
+  <div class="dr-body">
+    <div class="explain" id="drExplain"></div>
+    <div>
+      <div class="grp-t"><span>这一项，你现在</span><span class="up" id="drUp"></span></div>
+      <div class="lv" id="drLv">
+        <button data-l="0" aria-pressed="false"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="3" fill="#4a5578"/></svg>还没想过</button>
+        <button data-l="1" aria-pressed="false"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="9" fill="#c9d2f5" opacity=".18"/><circle cx="13" cy="13" r="4" fill="#c9d2f5"/></svg>有点模糊</button>
+        <button data-l="2" aria-pressed="false"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" fill="#fff" opacity=".2"/><circle cx="13" cy="13" r="6" fill="#fff"/></svg>心里有数</button>
+      </div>
+    </div>
+    <div>
+      <div class="grp-t"><span>标记</span></div>
+      <div class="tag" id="drTag">
+        <button data-t="s" aria-pressed="false">✦ 我的长处</button>
+        <button data-t="g" aria-pressed="false">◇ 想补</button>
+      </div>
+    </div>
+    <div id="drRel"></div>
+    <div>
+      <div class="grp-t"><span>写下来</span></div>
+      <div class="chips" id="drChips"></div>
+      <label for="drNote" style="position:absolute;left:-9999px">笔记</label>
+      <textarea id="drNote" placeholder="想到什么写什么。点上面的问题可以插入进来。"></textarea>
+      <div class="wc" id="drWc"></div>
+    </div>
+  </div>
+  <div class="dr-foot">
+    <button class="btn" id="drPrev">‹ 上一颗</button>
+    <button class="btn" id="drNext">下一颗 ›</button>
+  </div>
+</aside>
+
+<div class="quick" id="quick" role="dialog" aria-modal="true" aria-label="快速点亮">
+  <div class="q-top"><span class="n" id="qN">1 / 36</span><div class="q-bar"><i id="qBar"></i></div><button class="ibtn" id="qClose" aria-label="退出快速点亮">✕</button></div>
+  <div class="q-stage"><div class="q-card" id="qCard"></div></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="imgModal"><div class="box">
+  <img id="imgPrev" alt="能力画像图片">
+  <p id="imgTip">长按或右键图片即可保存。</p>
+  <div class="rep-actions"><button class="btn primary" id="imgSave" hidden>保存图片</button><button class="btn" id="imgClose">关闭</button></div>
+</div></div>
+
+<script src="assets/app.js" defer></script>
+<div class="modal" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgT"><div class="box card dlg-box">
+  <h2 id="dlgT"></h2><div id="dlgB" class="dlg-body"></div>
+  <div class="rep-actions" id="dlgA"></div>
+</div></div>
+</body>
+</html>
