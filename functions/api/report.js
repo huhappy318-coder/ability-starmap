@@ -1,7 +1,8 @@
+import { SITE_MODEL, MAX_OUTPUT_TOKENS, budgetScope, reserveBudget, settleBudget } from "../../lib/budget.js";
 import { checkRateLimit } from "../../lib/rate-limit.js";
 
 // POST /api/report —— 用 DeepSeek 生成能力画像
-// 需要在 Cloudflare Pages 的环境变量里配置：DEEPSEEK_API_KEY（必填，设为 Secret）、DEEPSEEK_MODEL（可选，默认 deepseek-flash）
+// 站点凭据、模型与预算均由服务端控制。
 const MAX_BODY = 60_000; // 字节，防止过大的请求
 
 function buildPrompt(data) {
@@ -26,7 +27,7 @@ function json(body, status = 200) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!env.DEEPSEEK_API_KEY) return json({ error: "ai_not_configured" }, 503);
+  if (!env.SITE_DEEPSEEK_KEY || !env.AI_BUDGET_IP_SECRET || !env.AI_BUDGET) return json({ error: "ai_not_configured" }, 503);
 
   const raw = await request.text();
   if (raw.length > MAX_BODY) return json({ error: "too_large" }, 413);
@@ -42,21 +43,32 @@ export async function onRequestPost({ request, env }) {
   const blocked = await checkRateLimit(request, env);
   if (blocked) return blocked;
 
+  const prompt = buildPrompt(data);
+  let hold;
+  try {
+    const scope = await budgetScope(request.headers.get("CF-Connecting-IP"), env.AI_BUDGET_IP_SECRET);
+    hold = await reserveBudget(env.AI_BUDGET, scope, prompt);
+  } catch {
+    return json({ error: "budget_unavailable" }, 503);
+  }
+  if (!hold) return json({ error: "budget_exhausted" }, 402);
+
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 80_000);
   let res;
   try {
     res = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.DEEPSEEK_API_KEY}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.SITE_DEEPSEEK_KEY}` },
       body: JSON.stringify({
-        model: env.DEEPSEEK_MODEL || "deepseek-flash",
-        messages: [{ role: "user", content: buildPrompt(data) }],
+        model: SITE_MODEL,
+        messages: [{ role: "user", content: prompt }],
         thinking: { type: "disabled" },
         response_format: { type: "json_object" },
         temperature: 0.7,
-        max_tokens: 1500,
+        max_tokens: MAX_OUTPUT_TOKENS,
       }),
+      redirect: "manual",
       signal: ctl.signal,
     });
   } catch {
@@ -68,8 +80,19 @@ export async function onRequestPost({ request, env }) {
   if (res.status === 429) return json({ error: "rate_limited" }, 429);
   if (!res.ok) return json({ error: "upstream_error", status: res.status }, 502);
 
+  let out;
   try {
-    const out = await res.json();
+    out = await res.json();
+  } catch {
+    return json({ error: "invalid_ai_output" }, 502);
+  }
+  try {
+    await settleBudget(env.AI_BUDGET, hold, out?.usage);
+  } catch {
+    // 预留已经持久化。结算未确认时停止，不重试模型请求。
+    return json({ error: "budget_unavailable" }, 503);
+  }
+  try {
     const text = out?.choices?.[0]?.message?.content || "";
     const start = text.indexOf("{"), end = text.lastIndexOf("}");
     const report = JSON.parse(text.slice(start, end + 1));

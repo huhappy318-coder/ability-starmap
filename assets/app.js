@@ -716,7 +716,7 @@ function renderReport(){
   const r = state.report;
   if (!r) {
     const can = s.lit > 0 || s.words > 0;
-    const note = mode === "local" ? "没有接入 AI 时，会根据你的选择和标记生成一份基础画像，内容只在你的浏览器里处理。" : mode === "user" ? `将使用 ${esc(aiLabel(userAI))} 生成。你写下的内容会发给这个服务商。` : "点击后，你写下的内容会发给 AI 来生成画像，只用于这一次生成，不会公开。";
+    const note = mode === "local" ? "没有接入 AI 时，会根据你的选择和标记生成一份基础画像，内容只在你的浏览器里处理。" : mode === "user" ? `将使用 ${esc(aiLabel(userAI))} 生成。你写下的内容会发给这个服务商。` : mode === "api" ? "默认使用 DeepSeek V4.1 Flash。当前公网 IP 共用累计 5 元的站点额度。点击生成后，你的盘点内容会发送给 DeepSeek。" : "点击后，你写下的内容会发给 AI 来生成画像，只用于这一次生成，不会公开。";
     box.innerHTML = `<div class="card rep-empty"><h2>你的能力画像</h2><p>${can ? `已点亮 ${s.lit} 颗星，写下 ${s.words} 个字。写得越多，画像越准。` : "先在星图里点亮几颗星，再来生成画像。"}</p>
       <button class="btn primary" id="genBtn" ${can ? "" : "disabled"}>生成画像</button>
       <p style="font-size:12px">${note}</p>
@@ -812,7 +812,7 @@ async function generate(fresh){
       const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 90000);
       const res = await fetch("/api/report", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({data}), signal: ctl.signal});
       clearTimeout(t);
-      if (!res.ok) throw {code: res.status === 429 ? "rate_limited" : "upstream_error"};
+      if (!res.ok) throw {code: res.status === 402 ? "budget_exhausted" : res.status === 429 ? "rate_limited" : "upstream_error"};
       out = await res.json();
     }
     if (!out || typeof out !== "object" || !out.title) throw {code:"invalid_json"};
@@ -824,6 +824,7 @@ async function generate(fresh){
     if (c === "cancelled") { renderReport(); return; }
     if (c === "not_granted" || c === "sampling_disabled") sampleFn = null;
     state.report = localReport(); persist(); renderReport();
+    if (c === "budget_exhausted") { toast("当前 IP 的默认 AI 剩余额度不足，已生成基础画像"); return; }
     toast(mode === "user" ? `${aiErrorText(e)}，先生成了基础画像` : c === "rate_limited" ? "AI 调用太频繁，先生成了基础画像" : "AI 暂时不可用，先生成了基础画像");
   }
 }
