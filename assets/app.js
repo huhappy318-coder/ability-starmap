@@ -65,56 +65,128 @@
 
 const DOMAINS = [
  {id:"core",name:"核心能力",short:"核心能力",items:[
-  {id:"info",name:"信息渠道",goal:"你的信息从哪里来，靠不靠得住。",steps:["我常用的信息来源有哪些","最近一次重要判断，信息来自哪里","想补上或删掉的一个来源"]},
-  {id:"knowledge",name:"知识结构",goal:"哪些知识已经成体系，是怎么建起来的。",steps:["我自认为成体系的两三个领域","它们当初是怎么建起来的","离目标岗位要求，缺口最大的一块"]},
-  {id:"hardskill",name:"硬技能",goal:"哪些技能已成肌肉记忆，被 AI 替代的风险多大。",steps:["不查资料就能做好的技能","每项被 AI 替代的程度","风险最高那项的升级方向"]},
-  {id:"stack",name:"技术栈",goal:"手上的工具组合，能独立完成哪些完整工作。",steps:["我实际在用的工具","它们串起来能完成的一条链路","链路里还需要别人接手的环节"]},
-  {id:"ai",name:"AI 使用能力",goal:"用 AI 拿到的结果，你自己理解和判断得了吗。",steps:["用 AI 解决过的实际问题","哪个结果我讲不清楚（认知债）","我怎么比较方案、识别迎合"]},
-  {id:"reverse",name:"逆向工程",goal:"看到一个结果，能否往回拆出原理和条件。",steps:["一个我欣赏的作品或现象","它依赖的原理、步骤和条件","能用到自己身上的一条"]},
-  {id:"social",name:"社媒影响力",goal:"你在海外平台的基础，和还空着的生态位。",steps:["X、YouTube、Instagram、Substack 等平台的现状","最匹配我内容的一两个平台","还没人占好的位置"]},
-  {id:"taste",name:"审美能力",goal:"在哪类审美上有判断力，哪类还在模仿。",steps:["感官、文字、产品、架构各一个好例子","说不出理由的那一类","值得反复拆解的样本"]}
+  {id:"info",name:"信息渠道",goal:"你的信息从哪里来，靠不靠得住。",
+   question:"最近一次看到一条会影响你决定的消息，你是怎么确认它靠不靠谱的？", anchors:["只看了转发内容", "找到了原始出处", "核对了原文和另一份独立证据才做决定"],
+   steps:["我常用的信息来源有哪些","最近一次重要判断，信息来自哪里","想补上或删掉的一个来源"]},
+  {id:"knowledge",name:"知识结构",goal:"哪些知识已经成体系，是怎么建起来的。",
+   question:"挑一个你熟悉的概念。如果朋友问“这跟我有什么关系”，你能讲到哪一步？", anchors:["只能重复定义", "能举一个生活中的例子", "换个例子也能解释，还能说出什么时候不适用"],
+   steps:["我自认为成体系的两三个领域","它们当初是怎么建起来的","离目标岗位要求，缺口最大的一块"]},
+  {id:"hardskill",name:"硬技能",goal:"哪些技能已成肌肉记忆，被 AI 替代的风险多大。",
+   question:"最近一次动手做你最熟悉的活，遇到意外时，你能自己做到哪一步？", anchors:["要别人一步步带", "按熟悉的步骤能交付", "碰到新问题也能排查并检查成品"],
+   steps:["不查资料就能做好的技能","每项被 AI 替代的程度","风险最高那项的升级方向"]},
+  {id:"stack",name:"技术栈",goal:"手上的工具组合，能独立完成哪些完整工作。",
+   question:"上一次从收到材料到交出成品，你能把手边的工具用到哪一步？", anchors:["只会在一个工具里做一步", "能按现成流程把几个工具接起来", "能独立走完整个流程，出错时知道查哪一步"],
+   steps:["我实际在用的工具","它们串起来能完成的一条链路","链路里还需要别人接手的环节"]},
+  {id:"ai",name:"AI 使用能力",goal:"用 AI 拿到的结果，你自己理解和判断得了吗。",
+   question:"上一次准备采用 AI 的回答时，你是怎样检查它的？", anchors:["读着通顺就采用了", "核对了一个关键事实或算式", "检验了影响结论的部分，能解释哪些可以采用"],
+   steps:["用 AI 解决过的实际问题","哪个结果我讲不清楚（认知债）","我怎么比较方案、识别迎合"]},
+  {id:"reverse",name:"逆向工程",goal:"看到一个结果，能否往回拆出原理和条件。",
+   question:"看到一个喜欢的作品，想借用其中一个效果时，你能拆解到哪一步？", anchors:["只能说出喜欢哪里", "能指出可能用到的做法", "能做个小样，验证究竟是哪一步产生了效果"],
+   steps:["一个我欣赏的作品或现象","它依赖的原理、步骤和条件","能用到自己身上的一条"]},
+  {id:"social",name:"社媒影响力",goal:"你在海外平台的基础，和还空着的生态位。",
+   question:"上一次在网上发内容，想让某一类人看到，你能看出有没有触达到他们吗？", anchors:["只知道发出去了", "能从留言认出部分目标读者", "能用实际回应判断谁看到了，并据此调整下一篇"],
+   steps:["X、YouTube、Instagram、Substack 等平台的现状","最匹配我内容的一两个平台","还没人占好的位置"]},
+  {id:"taste",name:"审美能力",goal:"在哪类审美上有判断力，哪类还在模仿。",
+   question:"两个设计都好看，但只能留一个时，你能怎样说明自己的选择？", anchors:["只能说更喜欢哪个", "能指出一个具体差异", "能用使用场景说明差异为何重要，并指出该怎么改"],
+   steps:["感官、文字、产品、架构各一个好例子","说不出理由的那一类","值得反复拆解的样本"]}
  ]},
  {id:"hardware",name:"个人硬件条件",short:"硬件条件",items:[
-  {id:"fog",name:"脑雾",goal:"思路混乱，是状态问题还是方法问题。",steps:["最近几次脑子发懵的场景","原因：睡眠、情绪、环境，还是缺方法","最常见的一类可以怎么调"]},
-  {id:"emotion",name:"情绪",goal:"什么会触发情绪，会波及哪里，多久恢复。",steps:["最近几次情绪波动的触发事件","它影响了哪些行为，有没有跨领域","对我最有效的恢复方式"]},
-  {id:"time",name:"时间",goal:"真正能自主安排的时间有多少。",steps:["硬性任务、琐事、责任、自主时间的占比","无效时间的共同特征","可以先拿回来的一小块"]},
-  {id:"energy",name:"精力",goal:"每天的有效精力有多少，被什么消耗。",steps:["一天里精力最好和最差的时段","最耗精力、回报最低的事","最重要的事放在哪个时段"]},
-  {id:"grit",name:"心力",goal:"压力和长期没回报时，还能否判断并继续。",steps:["我当过兜底、打过翻身仗的经历","多线并行时一条出事，其他还撑得住吗","面对返工、取舍、热情褪去时我怎么办"]},
-  {id:"body",name:"体力",goal:"身体能不能撑住现在的安排。",steps:["睡眠、运动、饮食的现状","疲劳后多久能恢复","身体限制了哪些计划"]}
+  {id:"fog",name:"脑雾",goal:"思路混乱，是状态问题还是方法问题。",
+   question:"最近一次读了几遍还是理不清头绪时，你是怎么重新开始的？", anchors:["卡在那里，不知道先做什么", "能停一下，把事情写出来", "能找出卡住的具体一步，换个办法继续或安排休息"],
+   steps:["最近几次脑子发懵的场景","原因：睡眠、情绪、环境，还是缺方法","最常见的一类可以怎么调"]},
+  {id:"emotion",name:"情绪",goal:"什么会触发情绪，会波及哪里，多久恢复。",
+   question:"最近一次听到让你不舒服的话，你在回应前做到了什么？", anchors:["回完才发现自己很激动", "能察觉情绪，先停一停", "能说清介意什么，再选一个合适的回应方式"],
+   steps:["最近几次情绪波动的触发事件","它影响了哪些行为，有没有跨领域","对我最有效的恢复方式"]},
+  {id:"time",name:"时间",goal:"真正能自主安排的时间有多少。",
+   question:"回看最近一个原本想做自己事情的下午，你能说清时间去了哪里吗？", anchors:["只记得很忙", "能说出主要被哪件事占了", "能找出一段可调整的时间，并实际留给想做的事"],
+   steps:["硬性任务、琐事、责任、自主时间的占比","无效时间的共同特征","可以先拿回来的一小块"]},
+  {id:"energy",name:"精力",goal:"每天的有效精力有多少，被什么消耗。",
+   question:"上一次有件需要专心的事，你怎样选动手的时段？", anchors:["有空就做，即使已经很累", "知道自己通常几点状态好", "实际把难事放在合适时段，状态变化时也会调整"],
+   steps:["一天里精力最好和最差的时段","最耗精力、回报最低的事","最重要的事放在哪个时段"]},
+  {id:"grit",name:"心力",goal:"压力和长期没回报时，还能否判断并继续。",
+   question:"最近一次花了不少力气却要返工，你怎样决定接下来做什么？", anchors:["一时不知道如何继续", "能挑一个小步骤重新开始", "能判断哪些值得保留，做一次小尝试再决定去留"],
+   steps:["我当过兜底、打过翻身仗的经历","多线并行时一条出事，其他还撑得住吗","面对返工、取舍、热情褪去时我怎么办"]},
+  {id:"body",name:"体力",goal:"身体能不能撑住现在的安排。",
+   question:"回想最近一次出门办事或活动，你对自己体力的估计有多准？", anchors:["结束后才发现安排过量", "大致知道什么时候要歇一歇", "能按自己的状态安排路程和休息，途中也能调整"],
+   steps:["睡眠、运动、饮食的现状","疲劳后多久能恢复","身体限制了哪些计划"]}
  ]},
  {id:"money",name:"资产与财务",short:"资产财务",items:[
-  {id:"balance",name:"资产负债",goal:"如实知道自己有什么、欠什么。",steps:["全部资产和负债","每月需要还多少","收入和还款放在一起的状况"]},
-  {id:"allocation",name:"资产配置",goal:"钱以什么形式放着，合不合需要。",steps:["随时可用和暂时不能动的部分","各自是否匹配用途","明显不匹配的一处"]},
-  {id:"income",name:"收入曲线",goal:"收入从哪来，稳不稳，往哪走。",steps:["所有收入来源","每个来源的稳定程度","整体趋势和关键变量"]},
-  {id:"fixed",name:"刚性支出",goal:"必须花的钱，以及未来怎么变。",steps:["不能轻易停的支出","抚养、扶养、赡养等责任","未来的变化方向"]},
-  {id:"flexible",name:"柔性支出",goal:"收入变化时，哪里还有余地。",steps:["可调整的支出和它满足的需要","能减少、延后、替换的部分","调整后会失去什么"]}
+  {id:"balance",name:"资产负债",goal:"如实知道自己有什么、欠什么。",
+   question:"如果今天要核清自己手头的钱和待还款项，你能核到什么程度？", anchors:["只能凭印象估", "能查到主要账户和欠款", "能核对余额、还款日期，也能确认哪些项目为零"],
+   steps:["全部资产和负债","每月需要还多少","收入和还款放在一起的状况"]},
+  {id:"allocation",name:"资产配置",goal:"钱以什么形式放着，合不合需要。",
+   question:"假如明天要付一笔必要开销，你能判断哪部分钱到时能用吗？", anchors:["不确定钱在哪或何时能取", "知道一个可用来源", "能核对到账时间和限制，判断够不够用"],
+   steps:["随时可用和暂时不能动的部分","各自是否匹配用途","明显不匹配的一处"]},
+  {id:"income",name:"收入曲线",goal:"收入从哪来，稳不稳，往哪走。",
+   question:"回看最近几次进账，你能判断下个月哪些钱还会来吗？", anchors:["说不清进账来自哪里", "知道主要来源和大致金额", "能区分已确定与不确定的进账，说清估算依据"],
+   steps:["所有收入来源","每个来源的稳定程度","整体趋势和关键变量"]},
+  {id:"fixed",name:"刚性支出",goal:"必须花的钱，以及未来怎么变。",
+   question:"如果要列出下个月停不掉的开销，你能把账列到什么程度？", anchors:["只能想起一两笔", "能列出住房等主要项目", "能核对金额与扣款日，连不按月支付的项目也算进去"],
+   steps:["不能轻易停的支出","抚养、扶养、赡养等责任","未来的变化方向"]},
+  {id:"flexible",name:"柔性支出",goal:"收入变化时，哪里还有余地。",
+   question:"回看上个月的消费，如果要少花一点，你能选出怎么调整吗？", anchors:["只想到“以后省一点”", "能指出一项可以少花的开销", "能用实际账单比较两种调整办法，说清各自影响"],
+   steps:["可调整的支出和它满足的需要","能减少、延后、替换的部分","调整后会失去什么"]}
  ]},
  {id:"career",name:"职场潜力",short:"职场潜力",items:[
-  {id:"expertise",name:"专业实力",goal:"能独立解决什么问题，有没有过时。",steps:["我能独立解决的问题类型","每类对应的实际成果","放在今天还适用吗"]},
-  {id:"industry",name:"行业影响力",goal:"真人脉与伪人脉，行业认可匹不匹配目标。",steps:["行业里认识我的人和认可原因","真正能互相帮上忙的人","最需要补上的缺口"]},
-  {id:"promotion",name:"晋升潜力",goal:"会不会被困在基层，怎样借平台提升议价权。",steps:["视角切换、业务架构、说服、获客等方面的状态","最可能卡住我的一项","能独立带走的能力"]}
+  {id:"expertise",name:"专业实力",goal:"能独立解决什么问题，有没有过时。",
+   question:"最近有人来找你解决专业问题时，你能独立负责到哪一步？", anchors:["需要别人先告诉我怎么做", "能独立处理常见情况", "遇到例外也能判断，交付后能验证问题是否解决"],
+   steps:["我能独立解决的问题类型","每类对应的实际成果","放在今天还适用吗"]},
+  {id:"industry",name:"行业影响力",goal:"真人脉与伪人脉，行业认可匹不匹配目标。",
+   question:"回想最近一次同行遇到你擅长的问题，对方怎样想到找你？", anchors:["还想不到这样的例子", "熟悉我的同行知道我会做什么", "有同行因看过成果来请教，或把我推荐给别人"],
+   steps:["行业里认识我的人和认可原因","真正能互相帮上忙的人","最需要补上的缺口"]},
+  {id:"promotion",name:"晋升潜力",goal:"会不会被困在基层，怎样借平台提升议价权。",
+   question:"最近一次想争取更大职责时，你怎样让负责人判断你能接住？", anchors:["只表达了想试试", "举出了做过的相关任务", "讲清能负责的结果、边界和风险，并拿出交付例子"],
+   steps:["视角切换、业务架构、说服、获客等方面的状态","最可能卡住我的一项","能独立带走的能力"]}
  ]},
  {id:"venture",name:"创业潜力",short:"创业潜力",items:[
-  {id:"rd",name:"研发力",goal:"能否发现真痛点并做出最小可行版本。",steps:["我发现过的痛点和做过的 MVP","被真实用户验证过的","从想法到 MVP 常卡住的环节"]},
-  {id:"market",name:"市场力",goal:"吸引陌生人的真实能力和短板。",steps:["吸引过陌生人关注的经历","当时起作用的是什么","离理想最大的短板"]},
-  {id:"sales",name:"销售力",goal:"能否理解顾虑、讲清价值、促成结果。",steps:["一次说服成功和一次失败","对方的顾虑和我的回应","最缺的说服能力"]},
-  {id:"brand",name:"品牌力",goal:"别人为什么信你，这份信任经不经得起交付。",steps:["别人信任我的原因","支撑信任的成果和履约","被信任和被看见的差别"]}
+  {id:"rd",name:"研发力",goal:"能否发现真痛点并做出最小可行版本。",
+   question:"上一次有产品点子时，你做到了哪一步来验证别人真的需要它？", anchors:["还停在自己的设想", "请目标用户讲过实际困难", "让目标用户试过最小版本，并根据使用情况改过"],
+   steps:["我发现过的痛点和做过的 MVP","被真实用户验证过的","从想法到 MVP 常卡住的环节"]},
+  {id:"market",name:"市场力",goal:"吸引陌生人的真实能力和短板。",
+   question:"如果今天要找第一批陌生用户，上一次的经验能帮你做到哪一步？", anchors:["只能想到发给身边的人", "知道一处目标用户会出现的地方", "在那里试过具体说法，知道哪种能换来真实咨询"],
+   steps:["吸引过陌生人关注的经历","当时起作用的是什么","离理想最大的短板"]},
+  {id:"sales",name:"销售力",goal:"能否理解顾虑、讲清价值、促成结果。",
+   question:"最近一次别人对你的方案说“再想想”，你怎样弄清对方的顾虑？", anchors:["又讲了一遍优点", "问出了对方最犹豫的一点", "按顾虑给出合适回应，并确认对方愿不愿意往下走"],
+   steps:["一次说服成功和一次失败","对方的顾虑和我的回应","最缺的说服能力"]},
+  {id:"brand",name:"品牌力",goal:"别人为什么信你，这份信任经不经得起交付。",
+   question:"陌生人问“凭什么相信你能交付”，你能拿出什么来回答？", anchors:["主要靠口头保证", "能展示一个相关作品", "能展示相似需求的成果、当时的承诺和实际交付"],
+   steps:["别人信任我的原因","支撑信任的成果和履约","被信任和被看见的差别"]}
  ]},
  {id:"inner",name:"内圈关系",short:"内圈关系",items:[
-  {id:"duty",name:"既有责任",goal:"正在或将要承担的照顾责任。",steps:["涉及的人：孩子、平辈、老人","需要的钱和时间，持续多久","它对我安排的影响"]},
-  {id:"family",name:"原生家庭",goal:"原生家庭带来的支持、责任和消耗。",steps:["经济、照顾、相处三方面的现状","它和我目标的关系","是否被某些说法反复牵引"]},
-  {id:"intimate",name:"亲密关系",goal:"关系是在互相支持，还是持续增压。",steps:["双方的需要和付出","是否把外面的不顺带回关系","没有伴侣时：我想要什么样的关系"]}
+  {id:"duty",name:"既有责任",goal:"正在或将要承担的照顾责任。",
+   question:"如果你这周临时忙不过来，需要你照应的人和事怎么安排？", anchors:["临到跟前才想起要安排", "能列出主要责任和时间", "能说清哪些由自己承担，也确认过需要时谁能接手"],
+   steps:["涉及的人：孩子、平辈、老人","需要的钱和时间，持续多久","它对我安排的影响"]},
+  {id:"family",name:"原生家庭",goal:"原生家庭带来的支持、责任和消耗。",
+   question:"家人提出一个会打乱你计划的请求时，你能怎样答复？", anchors:["当场答应或拒绝，事后才想后果", "能说清自己愿意承担多少", "能说明边界，与对方商量出自己做得到的安排"],
+   steps:["经济、照顾、相处三方面的现状","它和我目标的关系","是否被某些说法反复牵引"]},
+  {id:"intimate",name:"亲密关系",goal:"关系是在互相支持，还是持续增压。",
+   question:"当你和亲近的人对相处方式有不同期待时，你能怎样把需要说出来？", anchors:["希望对方自己猜到", "能说出自己希望怎样相处", "能说出具体请求，也能听懂对方的需要，再商量做法"],
+   steps:["双方的需要和付出","是否把外面的不顺带回关系","没有伴侣时：我想要什么样的关系"]}
  ]},
  {id:"outer",name:"外圈关系",short:"外圈关系",items:[
-  {id:"socialskill",name:"社交能力",goal:"在具体场合建立和维系关系的能力。",steps:["最近在新场合和人建立联系的经历","开启、表达、维系，哪一环最弱","最想提升的一项"]},
-  {id:"network",name:"熟人网络",goal:"哪些关系真实可用，彼此能做什么。",steps:["能实际联系上的人","过去的合作或互相支持","维系需要的投入"]},
-  {id:"circle",name:"圈层",goal:"你身处哪些群体，离想进入的环境多远。",steps:["我长期所在的圈子","它们带来的信息、机会和习惯","我在其中是旁观、参与还是贡献"]}
+  {id:"socialskill",name:"社交能力",goal:"在具体场合建立和维系关系的能力。",
+   question:"最近一次在新场合遇到想认识的人，你做到了哪一步？", anchors:["想搭话但不知道怎么开口", "聊起了一个双方都有兴趣的话题", "聊完后自然约定了下次联系，并实际跟进"],
+   steps:["最近在新场合和人建立联系的经历","开启、表达、维系，哪一环最弱","最想提升的一项"]},
+  {id:"network",name:"熟人网络",goal:"哪些关系真实可用，彼此能做什么。",
+   question:"遇到自己解决不了的具体问题时，你能找到谁来一起想办法？", anchors:["一时想不到可以联系谁", "能想到一个了解这件事的人", "能说明为什么找对方，提出清楚的小请求并得到回应"],
+   steps:["能实际联系上的人","过去的合作或互相支持","维系需要的投入"]},
+  {id:"circle",name:"圈层",goal:"你身处哪些群体，离想进入的环境多远。",
+   question:"在你最近参与的一个群体里，你实际怎样参与了交流？", anchors:["大多只看消息", "会提问或回应一个话题", "分享过对别人有用的经验，并有过后续交流或合作"],
+   steps:["我长期所在的圈子","它们带来的信息、机会和习惯","我在其中是旁观、参与还是贡献"]}
  ]},
  {id:"access",name:"资源准入权",short:"资源准入",items:[
-  {id:"security",name:"社会保障",goal:"生病、失业、年老时能依靠什么。",steps:["已有的保障","三种情境下的覆盖范围","最大的缺口"]},
-  {id:"residency",name:"全球居住权",goal:"是否需要另一种居住选择。",steps:["目前能长期生活的地方","多地生活对我有多重要","它牵动的事业、关系和财产"]},
-  {id:"property",name:"全球财产确权",goal:"财产在哪里，权属是否清楚。",steps:["财产所在地和持有方式","权属与实际支配是否一致","能否支撑未来的安排"]},
-  {id:"fallback",name:"兜底能力",goal:"出事之后能退到哪里，还能试错几次。",steps:["设想失业或收入中断","那时实际可用的资源和支持","我能承受几次试错"]}
+  {id:"security",name:"社会保障",goal:"生病、失业、年老时能依靠什么。",
+   question:"如果突然需要一笔医疗费用，你能查清自己已有的保障怎么用吗？", anchors:["不知道先查哪里", "找得到自己的参保或保障记录", "能核对适用条件、办理入口和还需自己承担的部分"],
+   steps:["已有的保障","三种情境下的覆盖范围","最大的缺口"]},
+  {id:"residency",name:"全球居住权",goal:"是否需要另一种居住选择。",
+   question:"假设你想去另一个地方长期生活，你能怎样核实自己是否具备条件？", anchors:["主要凭印象判断", "知道去哪里查居住条件", "能用官方要求核对自己的情况，说清可行之处或缺口"],
+   steps:["目前能长期生活的地方","多地生活对我有多重要","它牵动的事业、关系和财产"]},
+  {id:"property",name:"全球财产确权",goal:"财产在哪里，权属是否清楚。",
+   question:"如果需要证明一项财产归谁所有，你能找到哪些依据？", anchors:["不知道材料放在哪", "知道登记人或能找到一份凭证", "能找齐相关记录，核对持有人和实际使用安排"],
+   steps:["财产所在地和持有方式","权属与实际支配是否一致","能否支撑未来的安排"]},
+  {id:"fallback",name:"兜底能力",goal:"出事之后能退到哪里，还能试错几次。",
+   question:"假如下个月主要收入中断，你能把应对方案算到哪一步？", anchors:["只知道得省钱", "能估出必要开销与可用资金", "能据此算出可维持多久，并列出先做的具体安排"],
+   steps:["设想失业或收入中断","那时实际可用的资源和支持","我能承受几次试错"]}
  ]}
 ];
 const ORDER = []; const BY = {};
@@ -173,8 +245,9 @@ function normalize(raw){
   for (const k in items) {
     if (!BY[k]) continue;
     const v = items[k] || {};
+    const score = Number.isInteger(v.score) && v.score >= 1 && v.score <= 10 ? v.score : null;
     const lv = Number(v.lv != null ? v.lv : (v.s || 0)) || 0;
-    out.items[k] = {lv: Math.max(0, Math.min(2, lv)), tag: (v.tag === "s" || v.tag === "g") ? v.tag : "", n: String(v.n || ""), h: Array.isArray(v.h) ? v.h.slice(-10) : []};
+    out.items[k] = {score, lv: score ? scoreLevel(score) : Math.max(0, Math.min(2, Math.trunc(lv))), tag: (v.tag === "s" || v.tag === "g") ? v.tag : "", n: String(v.n || ""), h: Array.isArray(v.h) ? v.h.slice(-10) : []};
   }
   if (raw.profile) out.profile = {name: String(raw.profile.name || ""), motto: String(raw.profile.motto || "")};
   if (raw.report && typeof raw.report === "object") out.report = raw.report;
@@ -188,13 +261,32 @@ try {
 const get = id => state.items[id] || {lv:0, tag:"", n:"", h:[]};
 function set(id, patch){ state.items[id] = Object.assign({}, get(id), patch); }
 
+function scoreLevel(score){ return score >= 8 ? 2 : 1; }
+function saveScore(id, score){ set(id, {score, lv: scoreLevel(score)}); }
+function scoreLabel(v){
+  if (v.score) return `自评 ${v.score}/10 分`;
+  return v.lv || v.h?.length ? "原记录 · " + LV[v.lv] : "未评分";
+}
+function scoreButtons(score){
+  return Array.from({length:10}, (_, i) => {
+    const n = i + 1;
+    return `<button type="button" data-score="${n}" aria-label="${n} 分" aria-pressed="${score === n}">${n}</button>`;
+  }).join("");
+}
+function scoreGuide(it){
+  return `<dl class="score-guide">${it.anchors.map((a,i) => `<div><dt>${[1,5,10][i]} 分</dt><dd>${esc(a)}</dd></div>`).join("")}</dl>`;
+}
 function stats(){
   let lit=0, clear=0, words=0, cons=0;
-  ORDER.forEach(id => { const v = get(id); if (v.lv>0) lit++; if (v.lv===2) clear++; words += (v.n||"").replace(/\s/g,"").length; });
+  ORDER.forEach(id => { const v = get(id); if (v.lv>0) lit++; if (v.score>=8) clear++; words += (v.n||"").replace(/\s/g,"").length; });
   DOMAINS.forEach(d => { if (d.items.every(it => get(it.id).lv > 0)) cons++; });
   return {lit, clear, words, cons};
 }
-function domRatio(d){ return d.items.reduce((a,it)=>a+get(it.id).lv,0) / (d.items.length*2); }
+function domainScores(d){ return d.items.map(it => get(it.id).score).filter(Boolean); }
+function domRatio(d){
+  const scores = domainScores(d);
+  return scores.length ? scores.reduce((a,b) => a+b, 0) / (scores.length*10) : 0;
+}
 
 /* ---------- 保存 ---------- */
 let cloudRef=null, writing=false, queued=false;
@@ -410,7 +502,7 @@ function renderCrumb(){
   DOMAINS[zoomD].items.forEach(it => {
     const v = get(it.id), st = starStyle(v), w = (v.n || "").replace(/\s/g, "").length;
     const b = document.createElement("button"); b.type = "button";
-    b.innerHTML = `<i style="background:${st.col};box-shadow:${v.lv ? `0 0 ${v.lv*5}px ${st.col}` : "none"}"></i><b></b><small>${LV[v.lv]}${v.tag ? (v.tag === "s" ? " · 长处" : " · 想补") : ""}${w ? " · " + w + " 字" : ""}</small>`;
+    b.innerHTML = `<i style="background:${st.col};box-shadow:${v.lv ? `0 0 ${v.lv*5}px ${st.col}` : "none"}"></i><b></b><small>${scoreLabel(v)}${v.tag ? (v.tag === "s" ? " · 长处" : " · 想补") : ""}${w ? " · " + w + " 字" : ""}</small>`;
     b.querySelector("b").textContent = it.name;
     b.addEventListener("click", () => openDrawer(it.id));
     L.appendChild(b);
@@ -450,7 +542,7 @@ function renderMap(){
     h += `<text class="cons-sub" x="${c.label.x}" y="${c.label.y + 20}" text-anchor="middle">${done ? "✦ 星座已连成" : litN + " / " + c.d.items.length}</text>`;
     c.stars.forEach((s, k) => {
       const v = get(s.id), st = starStyle(v), it = BY[s.id].it;
-      h += `<g class="star${v.lv > 0 ? " lit" : ""}" data-id="${s.id}" tabindex="0" role="button" aria-label="${esc(it.name)}，${LV[v.lv]}${v.tag === "s" ? "，长处" : v.tag === "g" ? "，想补" : ""}" style="--d:${(k*0.37 + c.i*0.21).toFixed(2)}s;--o1:${st.o1};--o2:${st.o2}">
+      h += `<g class="star${v.lv > 0 ? " lit" : ""}" data-id="${s.id}" tabindex="0" role="button" aria-label="${esc(it.name)}，${scoreLabel(v)}${v.tag === "s" ? "，长处" : v.tag === "g" ? "，想补" : ""}" style="--d:${(k*0.37 + c.i*0.21).toFixed(2)}s;--o1:${st.o1};--o2:${st.o2}">
         <circle cx="${s.x}" cy="${s.y}" r="22" fill="transparent"/>
         <circle class="halo" cx="${s.x}" cy="${s.y}" r="${st.halo}" fill="${st.col}" opacity="${st.o1}" filter="url(#glow)"/>
         <circle class="core" cx="${s.x}" cy="${s.y}" r="${st.core}" fill="${st.col}"/>
@@ -485,7 +577,7 @@ function showTip(id){
   const g = svg.querySelector(`.star[data-id="${id}"] .core`); if (!g) return;
   const v = get(id), it = BY[id].it, r = g.getBoundingClientRect(), wr = $("#mapWrap").getBoundingClientRect();
   const n = (v.n || "").replace(/【[^】]*】/g, "").replace(/\s+/g, " ").trim();
-  tip.innerHTML = `<b>${esc(it.name)}</b><div class="st">${LV[v.lv]}${v.tag ? ` · <i class="${v.tag === "g" ? "g" : ""}">${v.tag === "s" ? "长处" : "想补"}</i>` : ""}</div>${n ? `<q>${esc(n.slice(0, 46))}${n.length > 46 ? "…" : ""}</q>` : ""}`;
+  tip.innerHTML = `<b>${esc(it.name)}</b><div class="st">${scoreLabel(v)}${v.tag ? ` · <i class="${v.tag === "g" ? "g" : ""}">${v.tag === "s" ? "长处" : "想补"}</i>` : ""}</div>${n ? `<q>${esc(n.slice(0, 46))}${n.length > 46 ? "…" : ""}</q>` : ""}`;
   const x = Math.max(90, Math.min(wr.width - 90, r.left + r.width/2 - wr.left));
   tip.style.left = x + "px"; tip.style.top = (r.top - wr.top) + "px";
   tip.classList.add("on");
@@ -539,7 +631,9 @@ let cur = null;
 const drawer = $("#drawer"), scrim = $("#scrim"), note = $("#drNote");
 function openDrawer(id){
   cur = id; const {it, d} = BY[id];
-  $("#drDom").textContent = d.name; $("#drTitle").textContent = it.name; $("#drGoal").textContent = it.goal;
+  $("#drDom").textContent = d.name; $("#drTitle").textContent = it.name; $("#drGoal").textContent = it.question;
+  $("#drGuide").innerHTML = scoreGuide(it);
+  $("#drLv").innerHTML = scoreButtons(get(id).score);
   const ex = $("#drExplain"); ex.innerHTML = explainHTML(id); bindExplain(ex);
   renderRel(id);
   setLinkFocus(id);
@@ -584,10 +678,9 @@ function closeDrawer(){
 }
 function syncDrawer(){
   const v = get(cur);
-  $("#drLv").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.l) === v.lv)));
+  $("#drLv").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.score) === v.score)));
   $("#drTag").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === v.tag)));
-  const h = v.h || [];
-  $("#drUp").textContent = h.length >= 2 && h[h.length-1] > h[h.length-2] ? "↑ 比上次更清晰" : "";
+  $("#drUp").textContent = scoreLabel(v);
   $("#drWc").textContent = (note.value.replace(/\s/g,"").length) + " 字";
   const dots = $("#drDots"); dots.innerHTML = "";
   BY[cur].d.items.forEach(x => {
@@ -601,11 +694,12 @@ function syncDrawer(){
 }
 $("#drLv").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b || !cur) return;
-  const lv = Number(b.dataset.l), prev = get(cur);
-  if (lv === prev.lv) return;
+  const score = Number(b.dataset.score), prev = get(cur);
+  if (score === prev.score) return;
+  const lv = scoreLevel(score);
   const before = stats();
   const domDoneBefore = BY[cur].d.items.every(it => get(it.id).lv > 0);
-  set(cur, {lv, h: [...(prev.h || []), lv].slice(-10)});
+  saveScore(cur, score);
   afterChange();
   const after = stats(), {it, d} = BY[cur];
   burst(cur, starStyle(get(cur)).col);
@@ -667,9 +761,9 @@ function renderPanel(){
   radarAnim = requestAnimationFrame(tick);
   const attr = $("#attr"); attr.innerHTML = "";
   DOMAINS.forEach(d => {
-    const lit = d.items.filter(it => get(it.id).lv > 0).length;
+    const count = domainScores(d).length;
     const b = document.createElement("button"); b.type = "button";
-    b.innerHTML = `<span>${esc(d.short)}</span><span class="tr"><i style="width:${domRatio(d)*100}%"></i></span><em>${lit}/${d.items.length}</em>`;
+    b.innerHTML = `<span>${esc(d.short)}</span><span class="tr"><i style="width:${domRatio(d)*100}%"></i></span><em>${count ? (domRatio(d)*10).toFixed(1) + " 分" : "未评分"}</em>`;
     b.title = "在星图中查看" + d.name;
     b.addEventListener("click", () => { location.hash = "map"; setTimeout(() => zoomTo(DOMAINS.indexOf(d)), 120); });
     attr.appendChild(b);
@@ -704,8 +798,13 @@ function aiMode(){ return userAI ? "user" : sampleFn ? "claude" : apiAI ? "api" 
 function reportData(){
   return DOMAINS.map(d => ({
     领域: d.name,
-    条目: d.items.map(it => { const v = get(it.id); return {名称: it.name, 清晰程度: LV[v.lv], 标记: v.tag === "s" ? "长处" : v.tag === "g" ? "想补" : "", 笔记: (v.n || "").slice(0, 700)}; })
-      .filter(x => x.清晰程度 !== "还没想过" || x.标记 || x.笔记)
+    条目: d.items.filter(it => {
+      const v = get(it.id); return v.score || v.lv || v.tag || v.n;
+    }).map(it => {
+      const v = get(it.id);
+      return {名称: it.name, ...(v.score ? {自评题: it.question, 自评满分10: v.score} : {原清晰程度: LV[v.lv]}),
+        标记: v.tag === "s" ? "长处" : v.tag === "g" ? "想补" : "", 笔记: (v.n || "").slice(0, 700)};
+    })
   })).filter(d => d.条目.length);
 }
 const SRC_LABEL = {claude: "由 Claude 生成", api: "由 AI 生成", user: "由你接入的 AI 生成", local: "基础画像 · 未使用 AI"};
@@ -748,10 +847,10 @@ function reportText(r){
   return L.join("\n");
 }
 function buildPrompt(data){
-  return `你是一位温和、直接的个人发展顾问。下面是一个人用「能力星图」做的自我盘点：八个领域，每一项有他自选的清晰程度（还没想过 / 有点模糊 / 心里有数）、标记（长处 / 想补）和自己写的笔记。
+  return `你是一位温和、直接的个人发展顾问。下面是一个人用「能力星图」做的自我盘点：八个领域，条目可能包含具体情境下的 1–10 分自评、旧版清晰程度、长处或想补标记及笔记。分数只代表本人对题中行为的判断。未评分的项目不能视为低分，旧版清晰程度不能换算成分数。
 
 要求：
-- 只根据他写下的内容和标记来写，不编造经历；不打分、不排名。
+- 可以引用已有自评分，结合标记和笔记解释。不要另外评分、排名或编造经历。
 - 不出现任何日期、期限、时间表或"每天/每周做什么"。方向是目标性的，不是任务清单。
 - 语言自然、具体，用中文。称呼用"你"。
 - 内容很少时，在 summary 里如实说明，并相应减少条目。
@@ -778,22 +877,21 @@ function cleanReport(out, src){
 function localReport(){
   const s = stats(), rk = RANKS[rankOf(s.lit)][1];
   const strengths = ORDER.filter(id => get(id).tag === "s").slice(0, 3);
-  const clearOnes = ORDER.filter(id => get(id).lv === 2 && get(id).tag !== "g");
-  const sItems = (strengths.length ? strengths : clearOnes.slice(0, 3)).map(id => ({name: BY[id].it.name, why: strengths.includes(id) ? "你把它标为了长处。" : "你对这一项心里有数。"}));
+  const clearOnes = ORDER.filter(id => get(id).score >= 8 && get(id).tag !== "g").sort((a,b) => get(b).score - get(a).score);
+  const sItems = (strengths.length ? strengths : clearOnes.slice(0, 3)).map(id => ({name: BY[id].it.name, why: strengths.includes(id) ? "你把它标为了长处。" : `这一题你给自己打了 ${get(id).score}/10 分。`}));
   const gapsIds = ORDER.filter(id => get(id).tag === "g");
-  const fuzzy = ORDER.filter(id => get(id).lv === 1 && get(id).tag !== "s");
+  const fuzzy = ORDER.filter(id => get(id).score && get(id).score <= 4 && get(id).tag !== "s").sort((a,b) => get(a).score - get(b).score);
   const gIds = (gapsIds.length ? gapsIds : fuzzy).slice(0, 3);
-  const gItems = gIds.map(id => ({name: BY[id].it.name, why: gapsIds.includes(id) ? "你把它标为了想补。" : "你对这一项还有点模糊。"}));
+  const gItems = gIds.map(id => ({name: BY[id].it.name, why: gapsIds.includes(id) ? "你把它标为了想补。" : `这一题你给自己打了 ${get(id).score}/10 分。`}));
   const dirIds = [...gIds, ...fuzzy.filter(id => !gIds.includes(id))].slice(0, 3);
   const directions = dirIds.map(id => `${BY[id].it.name}：${(EXPLAIN[id] && EXPLAIN[id].tips[0]) || BY[id].it.goal}`);
   if (!directions.length) { const unlit = ORDER.filter(id => get(id).lv === 0).slice(0, 3); unlit.forEach(id => directions.push(`先看看「${BY[id].it.name}」：${BY[id].it.goal}`)); }
-  const best = DOMAINS.slice().sort((a, b) => domRatio(b) - domRatio(a));
-  const strongD = best[0], weakD = best[best.length - 1];
-  const summary = s.lit === 0 ? "你还没有点亮任何一颗星。先用快速点亮过一遍，画像会更有内容。"
-    : `你已经点亮 ${s.lit} 颗星，其中 ${s.clear} 颗心里有数。目前最清楚的领域是「${strongD.name}」，最需要多看看的是「${weakD.name}」。`;
+  const scored = ORDER.filter(id => get(id).score).length;
+  const summary = scored ? `你为 ${scored} 项打了分，其中 ${s.clear} 项是 8 分及以上。以下是你已填写的盘点。`
+    : `你已经点亮 ${s.lit} 颗星。可以在「快速点亮」里为具体情境打分，让画像更贴近你的经历。`;
   const domains = DOMAINS.filter(d => d.items.some(it => get(it.id).lv > 0)).map(d => {
-    const lit = d.items.filter(it => get(it.id).lv > 0).length, clear = d.items.filter(it => get(it.id).lv === 2).length;
-    return {name: d.name, line: `点亮 ${lit}/${d.items.length}，其中 ${clear} 项心里有数。`};
+    const count = domainScores(d).length;
+    return {name: d.name, line: count ? `${count}/${d.items.length} 项已评分，自评均分 ${(domRatio(d)*10).toFixed(1)}/10。` : "已保留原来的盘点，尚未评分。"};
   });
   return cleanReport({title: rk, summary, strengths: sItems, gaps: gItems, directions: directions.slice(0, 3), domains}, "local");
 }
@@ -889,12 +987,7 @@ function bindExplain(box){ const d = box.querySelector("details"); if (d) d.addE
 
 /* ---------- 快速点亮 ---------- */
 const quick = $("#quick"), qCard = $("#qCard");
-let qi = 0, qBusy = false, qList = ORDER.slice(), qScope = null;
-const LVSVG = [
-  `<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="3.5" fill="#4a5578"/></svg>`,
-  `<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#c9d2f5" opacity=".18"/><circle cx="15" cy="15" r="5" fill="#c9d2f5"/></svg>`,
-  `<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="14" fill="#fff" opacity=".2"/><circle cx="15" cy="15" r="7" fill="#fff"/></svg>`
-];
+let qi = 0, qBusy = false, qList = ORDER.slice(), qScope = null, qTimer;
 function openQuick(scope){
   hideWelcome(true);
   if (cur) closeDrawer();
@@ -905,22 +998,23 @@ function openQuick(scope){
 function startQuick(scope){
   qScope = scope;
   qList = scope === null ? ORDER.slice() : DOMAINS[scope].items.map(it => it.id);
-  const i = qList.findIndex(id => get(id).lv === 0);
+  const i = qList.findIndex(id => !get(id).score);
   qi = i === -1 ? 0 : i;
   renderQ(!REDUCE);
 }
 function renderQPick(){
   $("#qN").textContent = "选择范围"; $("#qBar").style.width = "0%";
-  const s = stats();
+  const scored = ORDER.filter(id => get(id).score).length;
   qCard.className = "q-card in";
   qCard.innerHTML = `<span class="dom">快速点亮</span><h2>从哪里开始？</h2>
-    <p style="margin:0;color:var(--muted)">每颗星只选一下你现在的了解程度，不用写字。可以一口气过完，也可以一次只过一个星座。</p>
-    <button class="btn primary" id="qAll" style="justify-self:start">全部 36 颗 · 已点亮 ${s.lit}</button>
-    <div class="q-pick" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px">${DOMAINS.map((d, i) => { const lit = d.items.filter(it => get(it.id).lv > 0).length; return `<button class="btn" data-i="${i}" style="text-align:left;display:flex;justify-content:space-between;gap:8px"><span>${esc(d.name)}</span><span style="color:${lit === d.items.length ? "var(--gold)" : "var(--muted)"}">${lit}/${d.items.length}</span></button>`; }).join("")}</div>`;
+    <p style="margin:0;color:var(--muted)">回想自己最近的一次经历，选一个最贴近的分数。没有相关经历或暂时不适用，可以跳过。</p>
+    <button class="btn primary" id="qAll" style="justify-self:start">全部 36 题 · 已评 ${scored} 题</button>
+    <div class="q-pick" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px">${DOMAINS.map((d, i) => { const lit = domainScores(d).length; return `<button class="btn" data-i="${i}" style="text-align:left;display:flex;justify-content:space-between;gap:8px"><span>${esc(d.name)}</span><span style="color:${lit === d.items.length ? "var(--gold)" : "var(--muted)"}">${lit}/${d.items.length}</span></button>`; }).join("")}</div>`;
   $("#qAll").addEventListener("click", () => startQuick(null));
   qCard.querySelectorAll(".q-pick button").forEach(b => b.addEventListener("click", () => startQuick(Number(b.dataset.i))));
 }
 function closeQuick(){
+  clearTimeout(qTimer); qBusy = false;
   quick.classList.remove("on"); document.body.style.overflow = "";
   renderMap(); renderCount(); renderPanel();
 }
@@ -937,18 +1031,19 @@ function renderQ(anim){
   const id = qList[qi], {it, d} = BY[id], v = get(id);
   qCard.className = "q-card" + (anim ? " in" : "");
   qCard.innerHTML = `
-    <span class="dom">${esc(d.name)} · ${d.items.indexOf(it) + 1} / ${d.items.length}</span>
-    <h2>${esc(it.name)}</h2>
-    <div class="explain">${explainHTML(id)}</div>
+    <span class="dom">${esc(d.name)} · ${esc(it.name)}</span>
+    <h2 class="q-question" tabindex="-1">${esc(it.question)}</h2>
+    ${scoreGuide(it)}
     <div class="q-tag"><span>可选标记</span>
       <button class="btn" data-t="s" aria-pressed="${v.tag === "s"}" style="${v.tag === "s" ? "border-color:var(--gold);color:var(--gold)" : ""}">✦ 我的长处 <kbd>S</kbd></button>
       <button class="btn" data-t="g" aria-pressed="${v.tag === "g"}" style="${v.tag === "g" ? "border-color:var(--cyan);color:var(--cyan)" : ""}">◇ 想补 <kbd>G</kbd></button>
     </div>
-    <div class="q-lv">${LV.map((l, k) => `<button data-l="${k}" aria-pressed="${v.lv === k && (v.h || []).length > 0}">${LVSVG[k]}<span>${l}</span><kbd>${k + 1}</kbd></button>`).join("")}</div>
+    <div class="q-score-title">选分进入下一题<small>键盘 1–9，0 代表 10 分</small></div>
+    <div class="q-lv" role="group" aria-label="自评 1 到 10 分">${scoreButtons(v.score)}</div>
     <div class="q-foot"><button class="lnk" id="qPrev" ${qi === 0 ? "disabled" : ""}>‹ 上一张</button><button class="lnk" id="qWrite">在星图里写笔记</button><button class="lnk" id="qSkip">跳过 ›</button></div>`;
-  bindExplain(qCard);
+  if (anim || !qCard.contains(document.activeElement)) qCard.querySelector(".q-question").focus({preventScroll:true});
   qCard.querySelectorAll(".q-tag button").forEach(b => b.addEventListener("click", () => qTag(b.dataset.t)));
-  qCard.querySelectorAll(".q-lv button").forEach(b => b.addEventListener("click", () => qChoose(Number(b.dataset.l))));
+  qCard.querySelectorAll(".q-lv button").forEach(b => b.addEventListener("click", () => qChoose(Number(b.dataset.score))));
   $("#qPrev").addEventListener("click", () => qGo(-1));
   $("#qSkip").addEventListener("click", () => qGo(1));
   $("#qWrite").addEventListener("click", () => { const id2 = qList[qi]; closeQuick(); location.hash = "map"; const di = BY[id2].di; zoomTo(di); setTimeout(() => openDrawer(id2), 380); });
@@ -957,14 +1052,14 @@ function qTag(t){
   const id = qList[qi], v = get(id);
   set(id, {tag: v.tag === t ? "" : t}); persist(); renderQ(false);
 }
-function qChoose(lv){
+function qChoose(score){
   if (qBusy) return;
-  const id = qList[qi], prev = get(id);
+  const id = qList[qi];
   const domDoneBefore = BY[id].d.items.every(x => get(x.id).lv > 0);
-  set(id, {lv, h: lv !== prev.lv || !(prev.h || []).length ? [...(prev.h || []), lv].slice(-10) : prev.h});
+  saveScore(id, score);
   persist(); renderCount();
   const d = BY[id].d;
-  if (lv > 0 && !domDoneBefore && d.items.every(x => get(x.id).lv > 0)) toast(`<b>✦</b> 「${esc(d.name)}」星座已连成`);
+  if (!domDoneBefore && d.items.every(x => get(x.id).lv > 0)) toast(`<b>✦</b> 「${esc(d.name)}」星座已连成`);
   qGo(1);
 }
 function qGo(dir){
@@ -973,14 +1068,14 @@ function qGo(dir){
   qBusy = true;
   const reduce = REDUCE;
   qCard.classList.add("out");
-  setTimeout(() => { qi = n; qBusy = false; renderQ(!reduce); }, reduce ? 0 : 200);
+  qTimer = setTimeout(() => { qi = n; qBusy = false; renderQ(!reduce); }, reduce ? 0 : 200);
 }
 function renderQDone(){
   const s = stats(), sN = ORDER.filter(id => get(id).tag === "s").length, gN = ORDER.filter(id => get(id).tag === "g").length;
-  const nextD = qScope === null ? -1 : DOMAINS.findIndex((d, i) => i !== qScope && d.items.some(it => get(it.id).lv === 0));
+  const nextD = qScope === null ? -1 : DOMAINS.findIndex((d, i) => i !== qScope && d.items.some(it => !get(it.id).score));
   qCard.className = "q-card q-done in";
   qCard.innerHTML = `<span class="dom">${qScope === null ? "快速点亮完成" : "「" + esc(DOMAINS[qScope].name) + "」完成"}</span><div class="big">${s.lit} / ${TOTAL}</div>
-    <p style="margin:0;color:var(--muted)">点亮了 ${s.lit} 颗星，其中 ${s.clear} 颗心里有数${sN || gN ? `；标记了 ${sN} 个长处、${gN} 个想补` : ""}。接下来可以挑一颗慢慢写。</p>
+    <p style="margin:0;color:var(--muted)">点亮了 ${s.lit} 颗星，其中 ${s.clear} 项自评为 8 分及以上${sN || gN ? `；标记了 ${sN} 个长处、${gN} 个想补` : ""}。接下来可以挑一颗慢慢写。</p>
     <div class="row">${nextD >= 0 ? `<button class="btn primary" id="qdNext">继续「${esc(DOMAINS[nextD].name)}」</button>` : ""}<button class="btn ${nextD >= 0 ? "" : "primary"}" id="qdMap">去看星图</button><button class="btn" id="qdPanel">看角色面板</button>${gN ? `<button class="btn" id="qdGap">从想补的开始写</button>` : ""}</div>`;
   $("#qdNext")?.addEventListener("click", () => startQuick(nextD));
   $("#qdMap").addEventListener("click", () => { const z = qScope; closeQuick(); location.hash = "map"; zoomTo(z); });
@@ -992,7 +1087,8 @@ $("#quickBtn").addEventListener("click", () => zoomD === null ? openQuick() : op
 addEventListener("keydown", e => {
   if (!quick.classList.contains("on") || e.target.closest("input,textarea")) return;
   if (!qCard.querySelector(".q-lv")) return;
-  if (["1","2","3"].includes(e.key)) { e.preventDefault(); qChoose(Number(e.key) - 1); }
+  if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (/^[0-9]$/.test(e.key)) { e.preventDefault(); qChoose(Number(e.key) || 10); }
   else if (e.key === "s" || e.key === "S") qTag("s");
   else if (e.key === "g" || e.key === "G") qTag("g");
   else if (e.key === "ArrowLeft") qGo(-1);
@@ -1075,7 +1171,7 @@ $("#mReset").addEventListener("click", () => dialog({title: "清空全部内容�
 $("#mAI").addEventListener("click", openAISettings);
 $("#mAbout").addEventListener("click", () => dialog({title: "关于能力星图", body: `
   <p>能力星图把一个人的能力分成 <b>8 个领域、36 项</b>：核心能力、个人硬件条件、资产与财务、职场潜力、创业潜力、内圈关系、外圈关系、资源准入权。</p>
-  <p>它不打分，也不排时间表。你只需要选出自己对每一项的了解程度，愿意的话再写下想法。</p>
+  <p>每一项都有一道情境题。你可以按自己的经历选 1–10 分，标记长处或想补的地方，愿意的话再写下想法。</p>
   <p>由刘橙绿制作。</p>
   <p><b>数据去哪了：</b>你的选择和笔记只保存在当前设备的浏览器里，网站服务器不会保存。只有点击「生成画像」并且网站开启了 AI 时，笔记才会发送给 AI 生成这一次的画像。</p>`, actions: [{label: "知道了", cls: "primary"}]}));
 

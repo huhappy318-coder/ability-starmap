@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/styles.css?v=score1">
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
@@ -59,13 +59,13 @@
       <button class="btn" id="nextStar">✦ 下一颗</button>
     </div>
     <div class="map-wrap" id="mapWrap"><svg id="map" role="group" aria-label="能力星图"></svg><div class="tip" id="tip"></div>
-      <div class="welcome" id="welcome" hidden><div class="card"><h2>36 颗星，先快速过一遍</h2><p>每颗星只问一句：这一项你现在了解多少。三分钟左右就能点亮整片星空，之后再挑感兴趣的慢慢写。</p><button class="btn primary" id="welcomeGo">⚡ 开始快速点亮</button><button class="btn" id="welcomeSkip">我自己逛逛</button></div></div></div>
+      <div class="welcome" id="welcome" hidden><div class="card"><h2>36 颗星，先快速过一遍</h2><p>每颗星都是一道具体的情境题。回想最近一次经历，按自己的实际情况选 1–10 分，也可以跳过不适用的题。</p><button class="btn primary" id="welcomeGo">⚡ 开始快速点亮</button><button class="btn" id="welcomeSkip">我自己逛逛</button></div></div></div>
     <div class="cons-list" id="consList"></div>
     <p class="hint" id="mapHint">点一颗星，写下你对这一项的了解。</p>
     <div class="legend">
-      <span><i style="background:#4a5578"></i>还没想过</span>
-      <span><i style="background:#c9d2f5;box-shadow:0 0 6px #c9d2f5"></i>有点模糊</span>
-      <span><i style="background:#fff;box-shadow:0 0 10px #fff"></i>心里有数</span>
+      <span><i style="background:#4a5578"></i>未点亮</span>
+      <span><i style="background:#c9d2f5;box-shadow:0 0 6px #c9d2f5"></i>已点亮</span>
+      <span><i style="background:#fff;box-shadow:0 0 10px #fff"></i>高亮</span>
       <span><i style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></i>长处</span>
       <span><i style="background:var(--cyan);box-shadow:0 0 8px var(--cyan)"></i>想补</span>
     </div>
@@ -90,14 +90,14 @@
         <input class="txt" id="pMotto" maxlength="40" placeholder="一句话描述现在的自己">
         <div class="stats">
           <div class="stat"><b id="sLit">0</b><span>点亮的星</span></div>
-          <div class="stat"><b id="sClear">0</b><span>心里有数</span></div>
+          <div class="stat"><b id="sClear">0</b><span>8 分及以上</span></div>
           <div class="stat"><b id="sCons">0</b><span>连成的星座</span></div>
           <div class="stat"><b id="sWords">0</b><span>写下的字</span></div>
         </div>
       </div>
       <div class="card">
-        <h3>八维清晰度</h3>
-        <svg id="radar" viewBox="0 0 440 400" role="img" aria-label="八个领域的清晰度雷达图"></svg>
+        <h3>各领域自评均分</h3>
+        <svg id="radar" viewBox="0 0 440 400" role="img" aria-label="八个领域的自评均分雷达图"></svg>
         <div class="attr" id="attr"></div>
       </div>
       <div class="card" style="display:grid;gap:18px;align-content:start">
@@ -128,12 +128,9 @@
   <div class="dr-body">
     <div class="explain" id="drExplain"></div>
     <div>
-      <div class="grp-t"><span>这一项，你现在</span><span class="up" id="drUp"></span></div>
-      <div class="lv" id="drLv">
-        <button data-l="0" aria-pressed="false"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="3" fill="#4a5578"/></svg>还没想过</button>
-        <button data-l="1" aria-pressed="false"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="9" fill="#c9d2f5" opacity=".18"/><circle cx="13" cy="13" r="4" fill="#c9d2f5"/></svg>有点模糊</button>
-        <button data-l="2" aria-pressed="false"><svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" fill="#fff" opacity=".2"/><circle cx="13" cy="13" r="6" fill="#fff"/></svg>心里有数</button>
-      </div>
+      <div id="drGuide"></div>
+      <div class="grp-t"><span>你给自己打几分？</span><span class="up" id="drUp"></span></div>
+      <div class="q-lv" id="drLv" role="group" aria-label="自评 1 到 10 分"></div>
     </div>
     <div>
       <div class="grp-t"><span>标记</span></div>
@@ -168,7 +165,7 @@
   <div class="rep-actions"><button class="btn primary" id="imgSave" hidden>保存图片</button><button class="btn" id="imgClose">关闭</button></div>
 </div></div>
 
-<script src="assets/app.js" defer></script>
+<script src="assets/app.js?v=score1" defer></script>
 <div class="modal" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgT"><div class="box card dlg-box">
   <h2 id="dlgT"></h2><div id="dlgB" class="dlg-body"></div>
   <div class="rep-actions" id="dlgA"></div>

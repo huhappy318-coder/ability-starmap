@@ -218,8 +218,20 @@ ol.dir{margin:0;padding-left:1.4em;display:grid;gap:8px}
 @keyframes qin{from{opacity:0;transform:translateX(40px) rotate(2deg)}}
 .q-card .dom{font-size:13px;color:var(--accent)}
 .q-card h2{font-size:32px}
-.q-lv{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.q-lv button{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:16px;padding:16px 8px;display:grid;justify-items:center;gap:8px;font-size:15px;transition:all .15s}
+.q-lv{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+#drLv{grid-template-columns:repeat(5,minmax(0,1fr))}
+.score-guide{display:grid;gap:8px;margin:0;padding:12px 14px;background:rgba(169,188,255,.05);border-radius:12px}
+.score-guide div{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:baseline}
+.score-guide dt{color:var(--gold);font-size:13px;font-weight:700}
+.score-guide dd{margin:0;color:var(--ink);font-size:14px;line-height:1.5}
+.q-score-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.q-score-title small{color:var(--muted);font-size:12px}
+#drGuide{margin-bottom:14px}
+.q-card .q-question{font-size:clamp(21px,3vw,27px);line-height:1.45;margin:0}
+.q-question:focus{outline:none}
+@media (max-width:620px){.q-lv{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (pointer:coarse){.q-score-title small{display:none}}
+.q-lv button{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:10px;min-height:44px;padding:8px 2px;font-size:16px;transition:all .15s}
 .q-lv button:hover{border-color:var(--accent);background:rgba(169,188,255,.1);transform:translateY(-2px)}
 .q-lv button[aria-pressed="true"]{border-color:var(--accent);background:rgba(169,188,255,.14)}
 .q-lv kbd,.q-tag kbd{font:inherit;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
