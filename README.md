@@ -49,7 +49,7 @@ Settings → Pages → Deploy from a branch → `main` / root。GitHub Pages 不
 
 ## AI 接口限流
 
-`/api/report` 和 `/api/proxy` 对同一个来源 IP 共用滚动十分钟五次的额度。函数在转发前检查 Cloudflare 设置的 `CF-Connecting-IP`。每个获准请求会在 `AI_RATE_LIMIT` 写入一条记录，键由 IP 摘要和随机标识组成，十分钟后过期。KV 缺失或读写失败时，接口返回 503。超额返回 429，同一运行实例内来自同一 IP 的并发占位也可返回 429。
+`/api/report` 和 `/api/proxy` 对同一个来源 IP 共用滚动十分钟五次的额度。函数在转发前检查 Cloudflare 设置的 `CF-Connecting-IP`。每个 IP 摘要在 `AI_RATE_LIMIT` 有五个固定名额，每次占用一个名额，十分钟后过期。函数直接读取这五个键的到期时间。KV 缺失或读写失败时，接口返回 503。超额返回 429，同一运行实例内来自同一 IP 的并发占位也可返回 429。
 
 KV 使用最终一致性，多个边缘实例同时处理请求时可能短暂超额。有自定义域名和合适的 WAF 权限时，可在该域名对这两个路径的 POST 请求叠加按 IP 的限流规则。保留 KV 可覆盖项目的 pages.dev 地址与预览地址。
 
